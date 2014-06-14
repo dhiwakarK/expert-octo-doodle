@@ -1,26 +1,3 @@
-## Building on Linux
-
-## Ubuntu 14.04 (Trusty Tahr)
-
-```
-sudo apt-get install golang-go git
-
-./script/bootstrap
-```
-
-That will place a git-media binary in the `bin/` directory. Copy the binary to a directory in your path:
-
-```
-sudo cp bin/git-media /usr/local/bin 
-```
-
-Try it:
-
-```
-[949][rubiojr@octox] git media
-git-media v0.0.1
-
-[~]
-[949][rubiojr@octox] git media init
-git media initialized
-```
+version https://git-lfs.github.com/spec/v1
+oid sha256:20750f9ee858e0b426bf492ad31a58a78f93e407bf6ebc036e3785b936ff7337
+size 727
