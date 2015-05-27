@@ -1,12 +1,3 @@
-## Building on Linux
-
-There are build scripts for recent versions of CentOS- and Debian-flavored
-Linuxes in `../scripts/{centos,debian}-build`. Both install all prerequisites,
-then build the client and the man pages in Docker containers for CentOS 7,
-Debian 8, and Ubuntu 14.04.
-
-On CentOS 6, the client builds, but not the man pages, because of problems
-getting the right version of Ruby.
-
-Earlier versions of CentOS and Debian/Ubuntu have trouble building go, so they
-are non-starters.
+version https://git-lfs.github.com/spec/v1
+oid sha256:771f9948c8dd1632ab9d229bd5681413b7cf316287fef43647869ff6780c3b50
+size 756
