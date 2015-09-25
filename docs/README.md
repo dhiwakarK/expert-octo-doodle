@@ -1,16 +1,3 @@
-# Git LFS Documentation
-
-## Reference Manual
-
-Each Git LFS subcommand is documented in the [official man pages](man). Any of
-these can be viewed from the command also:
-
-```bash
-$ git lfs help <command>
-$ git lfs <command> -h
-```
-
-## Developer Docs
-
-Details of how the Git LFS client work are in the [official specification](spec.md).
-There is also an [API specification](api) that describes how the server works.
+version https://git-lfs.github.com/spec/v1
+oid sha256:9defd15ca312e40042582c4fb0dd0bf375c32325d3adab28371133065d3e5911
+size 526
