@@ -17,7 +17,9 @@ func postCommitCommand(cmd *cobra.Command, args []string) {
 	requireGitVersion()
 
 	// Skip this hook if no lockable patterns have been configured
-	if len(locking.GetLockablePatterns()) == 0 {
+	// Or if told to skip locking read-only
+	if len(locking.GetLockablePatterns()) == 0 ||
+		!cfg.Os.Bool("GIT_LFS_SET_LOCKABLE_READONLY", true) {
 		os.Exit(0)
 	}
 

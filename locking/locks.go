@@ -80,7 +80,8 @@ func Unlock(path, remote string, force bool) error {
 	}
 
 	// Make non-writeable if required
-	if IsFileLockable(path) {
+	if IsFileLockable(path) &&
+		config.Config.Os.Bool("GIT_LFS_SET_LOCKABLE_READONLY", true) {
 		return tools.SetFileWriteFlag(path, false)
 	}
 	return nil
