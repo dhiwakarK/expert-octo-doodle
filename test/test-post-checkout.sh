@@ -21,49 +21,52 @@ begin_test "post-checkout"
   {
     \"CommitDate\":\"$(get_date -10d)\",
     \"Files\":[
-      {\"Filename\":\"file1.dat\",\"Size\":100},
-      {\"Filename\":\"file2.dat\",\"Size\":75}]
+      {\"Filename\":\"file1.dat\",\"Data\":\"file 1 creation\"},
+      {\"Filename\":\"file2.dat\",\"Data\":\"file 2 creation\"}]
   },
   {
     \"CommitDate\":\"$(get_date -7d)\",
     \"Files\":[
-      {\"Filename\":\"file1.dat\",\"Size\":110},
-      {\"Filename\":\"file3.big\",\"Size\":66},
-      {\"Filename\":\"file4.big\",\"Size\":23}],
+      {\"Filename\":\"file1.dat\",\"Data\":\"file 1 updated commit 2\"},
+      {\"Filename\":\"file3.big\",\"Data\":\"file 3 creation\"},
+      {\"Filename\":\"file4.big\",\"Data\":\"file 4 creation\"}],
     \"Tags\":[\"atag\"]
   },
   {
     \"CommitDate\":\"$(get_date -5d)\",
     \"Files\":[
-      {\"Filename\":\"file2.dat\",\"Size\":87}]
+      {\"Filename\":\"file2.dat\",\"Data\":\"file 2 updated commit 3\"}]
   },
   {
     \"CommitDate\":\"$(get_date -3d)\",
     \"NewBranch\":\"branch2\",    
     \"Files\":[
-      {\"Filename\":\"file5.dat\",\"Size\":120},
-      {\"Filename\":\"file6.big\",\"Size\":30}]
+      {\"Filename\":\"file5.dat\",\"Data\":\"file 5 creation in branch2\"},
+      {\"Filename\":\"file6.big\",\"Data\":\"file 6 creation in branch2\"}]
   },
   {
     \"CommitDate\":\"$(get_date -1d)\",
     \"Files\":[
-      {\"Filename\":\"file2.dat\",\"Size\":33},
-      {\"Filename\":\"file3.big\",\"Size\":55}]
+      {\"Filename\":\"file2.dat\",\"Data\":\"file 2 updated in branch2\"},
+      {\"Filename\":\"file3.big\",\"Data\":\"file 3 updated in branch2\"}]
   }
-  ]" | lfstest-testutils addcommits
+  ]" | GIT_LFS_SET_LOCKABLE_READONLY=0 lfstest-testutils addcommits
+
+  # skipped setting read-only above to make bulk load simpler (no read-only issues)
 
   git push -u origin master branch2
 
-  # post-commit will make added files read-only in future, but don't rely on
-  # that for this test
-  chmod -w *.dat
+  # re-clone the repo so we start fresh
+  cd ..
+  rm -rf "$reponame"
+  clone_repo "$reponame" "$reponame"
 
-  git checkout master
+  # this will be master
 
-  [ -e file1.dat ]
-  [ -e file2.dat ]
-  [ -e file3.big ]
-  [ -e file4.big ]
+  [ "$(cat file1.dat)" == "file 1 updated commit 2" ]
+  [ "$(cat file2.dat)" == "file 2 updated commit 3" ]
+  [ "$(cat file3.big)" == "file 3 creation" ]
+  [ "$(cat file4.big)" == "file 4 creation" ]
   [ ! -e file5.dat ]
   [ ! -e file6.big ]
   # without the post-checkout hook, any changed files would now be writeable
@@ -83,12 +86,20 @@ begin_test "post-checkout"
   [ -w file4.big ]
   [ -w file6.big ]
 
+  # Confirm that contents of existing files were updated even though were read-only
+  [ "$(cat file2.dat)" == "file 2 updated in branch2" ]
+  [ "$(cat file3.big)" == "file 3 updated in branch2" ]
+
+
   # restore files inside a branch (causes full scan since no diff)
   rm -f *.dat
+  [ ! -e file1.dat ]
+  [ ! -e file2.dat ]
+  [ ! -e file5.dat ]
   git checkout file1.dat file2.dat file5.dat
-  [ -e file1.dat ]
-  [ -e file2.dat ]
-  [ -e file5.dat ]
+  [ "$(cat file1.dat)" == "file 1 updated commit 2" ]
+  [ "$(cat file2.dat)" == "file 2 updated in branch2" ]
+  [ "$(cat file5.dat)" == "file 5 creation in branch2" ]
   [ ! -w file1.dat ]
   [ ! -w file2.dat ]
   [ ! -w file5.dat ]
